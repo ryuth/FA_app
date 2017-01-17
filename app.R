@@ -170,9 +170,7 @@ server <- shinyServer(function(input, output, session){
   output$pass <- eventReactive(input$Login,{
     
     con <- dbConnect(drv = MySQL(),user="userid",password="password",dbname="db_name",host="host_address")
-    
     PASSWORD <- dbReadTable(con,"Password",row.names=NULL)
-    
     dbDisconnect(con)
     
     Username <- isolate(input$Username)
@@ -213,20 +211,15 @@ server <- shinyServer(function(input, output, session){
       tbl <- tbl[tbl$Player %in% input$FA_players,]
       tbl <- tbl[order(tbl$Bid_Num, decreasing = TRUE),]
       tbl <- tbl[1,]
-      
       if(tbl$Player[1] %in% ineligible)
       {
         print_it <- paste0("Time is up on ",tbl$Player[1])
       }
-      
       if((tbl$Bid_Num[1] == 1) & (!tbl$Player[1] %in% ineligible))
       {
         tbl$Start_Time[1] <-  "Clock hasn't started"
-        
         tbl$End_Time[1] <-  "Clock hasn't started"
-        
         tbl$Time_left[1] <- "Clock hasn't started"
-        
         print_it <- tbl$Time_left[1]
       }
       
@@ -257,27 +250,20 @@ server <- shinyServer(function(input, output, session){
   sliderValues <- eventReactive(input$choose,{
     
     con <- dbConnect(drv = MySQL(),user="userid",password="password",dbname="db_name",host="host_address")
-
-    clock <- dbReadTable(con,"tb_name",row.names=NULL)
-    
-    dbDisconnect(con)
-    
-    ineligible <- as.character(clock$Player[clock$clockend %in% "YES"])
-    
-    finished <- "NO"
-    
+    clock <- dbReadTable(con,"tb_name",row.names=NULL)  
+    dbDisconnect(con)  
+    ineligible <- as.character(clock$Player[clock$clockend %in% "YES"]) 
+    finished <- "NO"   
     if(input$FA_players %in% ineligible)
     {
       finished <- "YES"
       word <- paste0(input$FA_players," already signed FA contract.")  
-    }
-    
+    } 
     if(input$Username == "Tony")
     {
       word <- "You are not authorized to sign any FA"
       word
-    }
-    
+    }  
     if ((USER$Logged == TRUE) & (input$Username != "Tony") & (finished == "NO")){
       con <- dbConnect(drv = MySQL(),user="userid",password="password",dbname="db_name",host="host_address")
       tbl <- dbReadTable(con,"tb_name",row.names=NULL)
@@ -339,23 +325,17 @@ server <- shinyServer(function(input, output, session){
         option_money <- 0
         option_buy_out <- 0
         
-        years <- input$n15
-        
-        all_year <- as.numeric(c1) + as.numeric(c2) + as.numeric(c3) + as.numeric(c4) + as.numeric(c5) + as.numeric(c6) + as.numeric(c7) + as.numeric(c8) + as.numeric(c9) + as.numeric(c10)
-        
+        years <- input$n15 
+        all_year <- as.numeric(c1) + as.numeric(c2) + as.numeric(c3) + as.numeric(c4) + as.numeric(c5) + as.numeric(c6) + as.numeric(c7) + as.numeric(c8) + as.numeric(c9) + as.numeric(c10)       
         option_money <- as.numeric(round_any(as.numeric(all_year) / as.numeric(years) * 1.25,1000))
-        
         option_buy_out <- round_any(as.numeric((option_money * 0.1)),100000)
       }
       
       if(!input$club_option %in% "YES")
       {
         option_money <- 0
-        
-        option_money <- as.numeric(option_money)
-        
-        option_buy_out <- 0
-        
+        option_money <- as.numeric(option_money) 
+        option_buy_out <- 0      
         option_buy_out <- as.numeric(option_buy_out)
       }
       
@@ -365,11 +345,8 @@ server <- shinyServer(function(input, output, session){
         vest_buy_out <- 0
         
         years <- input$n15
-        
         all_year_vest <- as.numeric(c1) + as.numeric(c2) + as.numeric(c3) + as.numeric(c4) + as.numeric(c5) + as.numeric(c6) + as.numeric(c7) + as.numeric(c8) + as.numeric(c9) + as.numeric(c10)
-        
         vest_money <- as.numeric(round_any(as.numeric(all_year_vest) / as.numeric(years) * 1.25,1000))
-        
         vest_buy_out <- round_any(as.numeric((vest_money * 0.1)),100000)
         
       }
@@ -377,43 +354,29 @@ server <- shinyServer(function(input, output, session){
       if(!input$vest_option %in% "YES")
       {
         vest_money <- 0
-        
-        vest_money <- as.numeric(vest_money)
-        
-        vest_buy_out <- 0
-        
+        vest_money <- as.numeric(vest_money) 
+        vest_buy_out <- 0    
         vest_buy_out <- as.numeric(vest_buy_out)
       }
       
       years <- input$n15
-      
-      total <- as.numeric(c1) + as.numeric(c2) + as.numeric(c3) + as.numeric(c4) + as.numeric(c5) + as.numeric(c6) + as.numeric(c7) + as.numeric(c8) + as.numeric(c9) + as.numeric(c10) + as.numeric(option_buy_out) + as.numeric(vest_buy_out) + as.numeric(c16)
-      
+      total <- as.numeric(c1) + as.numeric(c2) + as.numeric(c3) + as.numeric(c4) + as.numeric(c5) + as.numeric(c6) + as.numeric(c7) + as.numeric(c8) + as.numeric(c9) + as.numeric(c10) + as.numeric(option_buy_out) + as.numeric(vest_buy_out) + as.numeric(c16)    
       AAV <- as.numeric(total) / as.numeric(years)
-      
-      points <- as.numeric(round_any((as.numeric(total) + (as.numeric(AAV) * 3) + (as.numeric(c1) * 1) - (as.numeric(option_buy_out) * 1) + (as.numeric(vest_buy_out) * 1)) / (1000000) - (as.numeric(years) * 1.5),1))
-      
+      points <- as.numeric(round_any((as.numeric(total) + (as.numeric(AAV) * 3) + (as.numeric(c1) * 1) - (as.numeric(option_buy_out) * 1) + (as.numeric(vest_buy_out) * 1)) / (1000000) - (as.numeric(years) * 1.5),1))    
       points <- as.numeric(points)
-      
       tbl4 <- tbl[tbl$Player == input$FA_players,]
-      
       max_point_player <- max(tbl4$Points)
-      
       if(points > max_point_player)
       {
         success <- TRUE
-      }
-      
+      }    
       if(points < max_point_player)
       {
-        success <- FALSE 
-        
+        success <- FALSE      
       }
-      
       if(points == max_point_player)
       {
-        success <- FALSE
-        
+        success <- FALSE  
       }
       
       year <- c("c1","c2","c3","c4","c5","c6","c7","c8","c9","c10")
