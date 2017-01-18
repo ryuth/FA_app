@@ -605,7 +605,7 @@ server <- shinyServer(function(input, output, session){
     
     if (USER$Logged == TRUE){
       
-      con <- dbConnect(drv = MySQL(),user="jamesryu",password="ripken77",dbname="fa_data",host="mysql.rfbdatabase.com")
+      con <- dbConnect(drv = MySQL(),user="userid",password="password",dbname="data",host="host")
       tbl <- dbReadTable(con,"FA_TABLE",row.names=NULL)
       dbDisconnect(con)
       
